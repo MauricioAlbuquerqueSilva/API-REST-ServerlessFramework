@@ -1,0 +1,84 @@
+service: cadastro-clientes
+plugins:
+  - serverless-offline
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+
+# you can overwrite defaults here
+  stage: dev
+  region: us-east-1
+
+  iamRoleStarements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:PutItem
+        - dynamodb:DeleteItem
+        - dynamodb:GetItem
+        - dynamodb:UpdateItem
+      Resource: arn:aws:dynamodb:us-east-1:132404669774:table/CLIENTE"
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+      Resource: "arn:aws:dynamodb:us-east-1:132404669774:table/CLIENTE/index/*"
+
+functions:
+  listarClientes:
+    handler: handler.listarClientes
+    events:
+      - http:
+          path: cliente
+          method: get
+
+  listarCliente:
+    handler: handler.listarCliente
+    events:
+      - http:
+          path: cliente/{id}
+          method: get
+  
+  cadastrarCliente:
+    handler: handler.cadastrarCliente
+    events:
+      - http:
+          path: cliente
+          method: post
+
+  editarCliente:
+    handler: handler.editarCliente
+    events:
+      - http:
+          path: cliente/{id}
+          method: put
+
+  excluirCliente:
+    handler: handler.excluirCliente
+    events:
+      - http:
+          path: cliente/{id}
+          method: delete
+
+resources: # CloudFormation template syntax
+  Resources:
+    Cliente:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: CLIENTE
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    

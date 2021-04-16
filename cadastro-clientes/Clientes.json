@@ -1,0 +1,14 @@
+{
+    "CLIENTE":[
+        {
+            "PutRequest":{
+                "Item":{
+                    "nome":{
+                        "S":"Maurício"
+                    }
+                }
+            }
+        }
+
+    ]
+}
